@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Leenky
+Comment=Collect URLs copied to the clipboard
+Exec=leenky
+Icon=leenky
+Categories=Utility;Network;
+Terminal=false
+StartupNotify=true

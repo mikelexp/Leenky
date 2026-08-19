@@ -1,2 +1,20 @@
-/__pycache__
-/links_collector.egg-info
+# Python environments and generated metadata
+.venv/
+*.egg-info/
+__pycache__/
+*.py[cod]
+
+# Test and tool caches
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Build and release artifacts
+build/
+dist/
+*.build/
+*.dist/
+*.onefile-build/
+/leenky-*-linux-x86_64.tar.gz

@@ -1,7 +1,7 @@
 [project]
 name = "leenky"
 version = "0.1.0"
-description = "A desktop clipboard URL collector for Linux"
+description = "Leenky is a desktop clipboard URL collector for Linux"
 requires-python = ">=3.10"
 dependencies = [
     "PySide6==6.11.1",

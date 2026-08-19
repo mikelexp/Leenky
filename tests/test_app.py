@@ -7,7 +7,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from PySide6.QtWidgets import QApplication
 
-from app import LinksCollectorWindow, extract_urls
+from app import LeenkyWindow, extract_urls
 
 
 class ExtractUrlsTests(unittest.TestCase):
@@ -28,11 +28,15 @@ class WindowTests(unittest.TestCase):
         cls.app = QApplication.instance() or QApplication([])
 
     def setUp(self) -> None:
-        self.window = LinksCollectorWindow()
+        self.window = LeenkyWindow()
         self.window.clipboard.clear()
 
     def tearDown(self) -> None:
         self.window.close()
+
+    def test_window_uses_leenky_name(self) -> None:
+        self.assertEqual(self.window.windowTitle(), "Leenky")
+        self.assertFalse(self.window.windowIcon().isNull())
 
     def test_discards_existing_duplicates_by_default(self) -> None:
         self.window.links_text.setPlainText("https://example.com")

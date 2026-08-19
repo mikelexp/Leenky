@@ -1,4 +1,4 @@
-"""Links Collector desktop application."""
+"""Leenky desktop application."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from pathlib import Path
 
 from PySide6.QtCore import QLibraryInfo, QSettings, QTimer, QUrl, SLOT, Signal, Slot, qVersion
 from PySide6.QtDBus import QDBusConnection, QDBusInterface
-from PySide6.QtGui import QClipboard, QColor, QGuiApplication, QPalette
+from PySide6.QtGui import QClipboard, QColor, QGuiApplication, QIcon, QPalette
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -27,7 +27,8 @@ from PySide6.QtWidgets import (
 )
 
 
-APP_NAME = "Links Collector"
+APP_NAME = "Leenky"
+ICON_PATH = Path(__file__).with_name("icon.png")
 KLIPPER_SERVICE = "org.kde.klipper"
 KLIPPER_PATH = "/klipper"
 KLIPPER_INTERFACE = "org.kde.klipper.klipper"
@@ -207,7 +208,7 @@ def extract_urls(text: str) -> list[str]:
     return urls
 
 
-class LinksTextEdit(QPlainTextEdit):
+class LeenkyTextEdit(QPlainTextEdit):
     copied = Signal(str)
 
     def copy(self) -> None:
@@ -217,17 +218,18 @@ class LinksTextEdit(QPlainTextEdit):
         super().copy()
 
 
-class LinksCollectorWindow(QMainWindow):
+class LeenkyWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle(APP_NAME)
+        self.setWindowIcon(QIcon(str(ICON_PATH)))
         self.resize(620, 420)
         self._processing_clipboard = False
         self._own_clipboard_text = ""
         self._klipper: QDBusInterface | None = None
         self._klipper_bus: QDBusConnection | None = None
 
-        self.links_text = LinksTextEdit()
+        self.links_text = LeenkyTextEdit()
         self.links_text.setPlaceholderText("Collected links appear here. You can also type links manually.")
         self.links_text.copied.connect(self._remember_own_copy)
 
@@ -390,11 +392,12 @@ def main() -> int:
     theme_mode = configure_qt_theme()
     QApplication.setApplicationName(APP_NAME)
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon(str(ICON_PATH)))
     ensure_placeholder_text_contrast(app)
     active_style = verify_qt_theme(app, theme_mode)
     if theme_mode.startswith("kde") and active_style.lower() in {"fusion", "windows"}:
         logging.warning("Plasma integration requested (%s), active Qt style is %s", theme_mode, active_style)
-    window = LinksCollectorWindow()
+    window = LeenkyWindow()
     window.show()
     return app.exec()
 

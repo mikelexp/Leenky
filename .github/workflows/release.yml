@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y patchelf
+
+      - name: Install build dependencies
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install --upgrade pip
+          .venv/bin/pip install -r requirements.txt -r requirements-build.txt
+
+      - name: Verify tag version
+        run: test "v$(.venv/bin/python scripts/version.py)" = "$GITHUB_REF_NAME"
+
+      - name: Build with Nuitka (onefile)
+        run: scripts/build-onefile.sh
+
+      - name: Package release tarball
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          mkdir -p release
+          cp dist/leenky release/
+          cp leenky.desktop release/
+          cp icon.png release/
+          chmod +x release/leenky
+          tar czf "leenky-${VERSION}-linux-x86_64.tar.gz" -C release leenky leenky.desktop icon.png
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: leenky-*-linux-x86_64.tar.gz

@@ -1,20 +1,52 @@
-# Python environments and generated metadata
-.venv/
-*.egg-info/
-__pycache__/
-*.py[cod]
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
 
-# Test and tool caches
-.coverage
-htmlcov/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
 
-# Build and release artifacts
-build/
-dist/
-*.build/
-*.dist/
-*.onefile-build/
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+.fvm/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Release archives
 /leenky-*-linux-x86_64.tar.gz
+
+# Widget Preview related
+.widget_preview/

@@ -1,112 +1,68 @@
 # Leenky
 
-Leenky is a lightweight Linux desktop application that collects URLs copied to
-your clipboard. Keep collecting while you browse, review the list in one place,
-then save it as a text file or append it to an existing one.
+Leenky collects URLs copied to the Linux desktop clipboard. Review and edit the
+collected list, then save it or append it to an existing text file.
 
 ## Features
 
-- Collects absolute URLs from copied text and URL clipboard data.
-- Keeps URLs in their original order and can discard duplicates automatically.
-- Clears the clipboard only after recognizing at least one URL.
-- Lets you save the current list or append it to a text file while preserving
-  the first occurrence of each URL.
-- Uses the desktop clipboard integration on Linux.
-- On KDE Plasma Wayland, integrates with Klipper so it can receive clipboard
-  updates while its window is unfocused.
+- Finds absolute URLs in clipboard text and collects them in source order.
+- Optionally discards duplicates and clears the clipboard only after finding URLs.
+- Provides editable list, Save as, Append to, and Clear actions.
+- On KDE Plasma Wayland, subscribes to Klipper clipboard updates over D-Bus when
+  the service is available. Other sessions use Flutter's standard clipboard API.
+- Follows the desktop light/dark preference via the freedesktop Settings portal
+  (GNOME, Plasma, and compatible desktops), updating immediately when it changes.
+  If the portal setting is unavailable, it falls back to Flutter's system theme.
+- Uses the freedesktop FileChooser portal for save/open dialogs so the desktop
+  provides its native chooser (for example, KDE's dialog on Plasma). It does not
+  fall back to GTK dialogs if the portal is unavailable.
 
-## Requirements
+## Requirements and run
 
-- Linux
-- Python 3.10 or newer
-- `PySide6==6.11.1` (installed from `requirements.txt`)
+Install Flutter with Linux desktop support and the Linux build prerequisites.
+Then from this directory:
 
-## Run From Source
-
-```bash
-git clone https://github.com/mikelexp/Leenky.git
-cd Leenky
-python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements.txt
-.venv/bin/python app.py
+```sh
+fvm flutter pub get
+fvm flutter run -d linux
 ```
 
-Alternatively, use the included task runners. `just run` and `make run` create
-the virtual environment and install the build dependencies when needed.
+The app polls the regular clipboard while running. Some Wayland compositors only
+allow clipboard reads while the app is focused; KDE Plasma can use Klipper to
+receive updates while unfocused. Clipboard URL MIME formats not represented as
+plain text are not currently read by the Flutter clipboard API.
 
-```bash
-just run
-# or
-make run
+## Test and build
+
+```sh
+fvm flutter test
+fvm flutter analyze
+fvm flutter build linux --release
 ```
 
-## Clipboard Behavior
+The release bundle is created under `build/linux/x64/release/bundle/`.
+`./compile.sh` also registers `leenky.desktop` and the icon in the current user's
+data directory so Wayland compositors can resolve the same app ID as the Python
+version.
 
-Leenky recognizes URLs in copied text and in clipboard URL data. Once one or
-more URLs are collected, it clears that clipboard entry to avoid collecting it
-again. Content copied from Leenky itself is excluded from collection.
+Install the release system-wide after compiling:
 
-Wayland compositors can restrict clipboard access for unfocused applications.
-On KDE Plasma Wayland, Leenky uses the running Klipper D-Bus service when it
-is available. On other desktop environments it falls back to Qt's standard
-clipboard API.
-
-## Testing
-
-Run the test suite headlessly:
-
-```bash
-QT_QPA_PLATFORM=offscreen .venv/bin/python -m unittest discover -s tests
+```sh
+./install.sh
 ```
 
-## Build And Install
+This installs the complete Flutter bundle under `/usr/lib/leenky`, exposes it as
+`/usr/bin/leenky`, and installs a system desktop entry using `Exec=leenky`.
 
-Install the build dependencies and create a distributable binary with Nuitka:
+## Releases and AUR
 
-```bash
-just install-deps
-just build-onefile
-# or: just build-standalone
+Push a `vX.Y.Z` tag matching the version in `pubspec.yaml` to run GitHub Actions.
+The workflow tests and analyzes the app, builds its Linux release bundle, and
+publishes `leenky-X.Y.Z-linux-x86_64.tar.gz` to a GitHub release.
+
+The existing AUR package remains `leenky-bin`. After the matching GitHub release
+is available and AUR SSH access is configured, update it with:
+
+```sh
+bash scripts/aur-publish.sh
 ```
-
-The same commands are available through Make:
-
-```bash
-make install-deps
-make build-onefile
-# or: make build-standalone
-```
-
-Install a locally built version for the current user:
-
-```bash
-just install
-# or
-make install
-```
-
-This installs the executable under `~/.local/bin`, the desktop entry under
-`~/.local/share/applications`, and the icon in the local hicolor icon theme.
-Use `just uninstall` or `make uninstall` to remove it.
-
-## Releases And AUR
-
-Pushing a tag named `vX.Y.Z` triggers the GitHub Actions release workflow. The
-tag must match the version in `pyproject.toml`. The workflow publishes a Linux
-x86_64 tarball containing the binary, desktop entry, and icon.
-
-The AUR package source is provided as `PKGBUILD` for `leenky-bin`. After a
-GitHub release is available and AUR SSH access is configured, publish it with:
-
-```bash
-just aur-publish
-# or
-make aur-publish
-```
-
-`aur-update` is an alias for the same command.
-
-## AI Disclaimer
-
-This application was created with the assistance of AI. I personally reviewed,
-validated, and tested the resulting code and behavior.

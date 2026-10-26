@@ -1,10 +1,9 @@
 [Desktop Entry]
-Version=1.0
-Type=Application
 Name=Leenky
-Comment=Collect URLs copied to the clipboard
+Comment=Collect links from your clipboard
 Exec=leenky
 Icon=leenky
-Categories=Utility;Network;
+StartupWMClass=dev.leenky.leenky
 Terminal=false
-StartupNotify=true
+Type=Application
+Categories=Utility;

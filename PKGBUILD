@@ -1,7 +1,7 @@
 # Maintainer: Miguel Scaramozzino <mikele@gmail.com>
 
 pkgname=leenky-bin
-pkgver=1.0.0
+pkgver=0.2.0
 pkgrel=1
 pkgdesc="Leenky, a desktop clipboard URL collector for Linux"
 arch=('x86_64')
